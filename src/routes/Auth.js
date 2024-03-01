@@ -1,4 +1,4 @@
-import { authService,} from "fbase";
+import { authService } from "fbase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, GithubAuthProvider } from "firebase/auth";
 import { useState } from "react";
 
@@ -27,14 +27,15 @@ const Auth = () => {
         try {
             let data;
             if (newAccount) {
-                // create newAccount
+                // create newAccount = a
                 data = await createUserWithEmailAndPassword(authService, email, password);
             } else {
                 // log in
                 data = await signInWithEmailAndPassword(authService, email, password);
             }
             console.log(data);
-            
+              
+             
         } catch (error) {
             setError(error.message)
             
