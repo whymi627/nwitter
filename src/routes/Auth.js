@@ -1,52 +1,17 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faTwitter,
+    faGoogle,
+    faGithub,
+} from "@fortawesome/free-brands-svg-icons";
+import AuthForm from "components/AuthForm";
 import { authService } from "fbase";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, GithubAuthProvider } from "firebase/auth";
-import { useState } from "react";
+import { signInWithPopup, GoogleAuthProvider, GithubAuthProvider } from "firebase/auth";
 
 
 const Auth = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [newAccount, setNewAccount] = useState(true);
-    const [error, setError] = useState("");
-
-    const onChange = (event) => {
-        const {
-            target: { name, value }
-        } = event;
-
-        if (name === "email") {
-            setEmail(value);
-        } else if (name === "password") {
-            setPassword(value);
-        }
-
-    };
-
-    const onSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            let data;
-            if (newAccount) {
-                // create newAccount = a
-                data = await createUserWithEmailAndPassword(authService, email, password);
-            } else {
-                // log in
-                data = await signInWithEmailAndPassword(authService, email, password);
-            }
-            console.log(data);
-              
-             
-        } catch (error) {
-            setError(error.message)
-            
-        }
-        
-    };
-
-    const toggleAccount = () => setNewAccount((prev) => !prev);
 
     const onSocialClick = async (event) => {
-        // console.log(event.target.name);
         const {
             target: {name},
         } = event;
@@ -60,41 +25,30 @@ const Auth = () => {
 
         try {
             const data = await signInWithPopup(authService, provider);
-            console.log(data);
         } catch (error) {
             console.error(error.message);
         }
     };
 
     return(
-        <div>
-            <form onSubmit={onSubmit}>
-                <input
-                    name="email"
-                    type="email" 
-                    placeholder="Enter your email." 
-                    required 
-                    value={email}
-                    onChange={onChange}
-                    />
-                <input
-                    name="password"
-                    type="password" 
-                    placeholder="Enter your password." 
-                    required
-                    value={password}
-                    onChange={onChange}
-                    />
-                <input type="submit" value={newAccount ? "Create Account" : "Login"}/>
-                {error}
-            </form>
-            <span onClick={toggleAccount}>
-                {newAccount ? "Sign In" : "Create Account"}
-            </span>
-
-            <div>
-                <button onClick={onSocialClick} name="google">Continue With Google</button>
-                <button onClick={onSocialClick} name="github">Continue With Github</button>
+        
+        <div className="authContainer">
+            <FontAwesomeIcon
+                icon={faTwitter}
+                color={"#04AAFF"}
+                size="3x"
+                style={{ marginBottom: 30 }}
+            />    
+            <AuthForm />
+            
+            <div className="authBtns">
+                <button onClick={onSocialClick} name="google" className="authBtn">
+                    Continue With Google<FontAwesomeIcon icon={faGoogle} style={{marginLeft: 5}} />
+                </button>
+                
+                <button onClick={onSocialClick} name="github" className="authBtn">
+                    Continue With Github <FontAwesomeIcon icon={faGithub} style={{marginLeft: 5}} />
+                </button>
             </div>
         </div>
 

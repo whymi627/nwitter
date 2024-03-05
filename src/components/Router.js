@@ -4,24 +4,52 @@ import Home from "routes/Home";
 import Profile from "routes/Profile";
 import Navigation from "./Navigation";
 
-const AppRouter = ({isLoggedIn, userObj, refreshUser}) => {
+const AppRouter = ({ isLoggedIn, userObj, refreshUser }) => {
 
     return (
         <Router>
-            {isLoggedIn && <Navigation userObj = {userObj} />}
+            {isLoggedIn && <Navigation userObj={userObj} />}
             <Routes>
                 {isLoggedIn ? (
-                    <>
-                        <Route path="/" element={<Home userObj={userObj} />} />
-                        <Route path="/profile" element={<Profile refreshUser={refreshUser} userObj = {userObj} />} />
-                    </>
-                    
+                    <Route
+                        path="/"
+                        element={
+                            <div
+                                style={{
+                                    maxWidth: 890,
+                                    width: "100%",
+                                    margin: "0 auto",
+                                    marginTop: 80,
+                                    display: "flex",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <Home userObj={userObj} />
+                            </div>
+                        }
+                    />
                 ) : (
                     <Route path="/" element={<Auth />} />
                 )}
-                <Route exact path="*" element={<Navigate to="/" replace />} />
+                <Route
+                    path="/profile"
+                    element={
+                        <div
+                            style={{
+                                maxWidth: 890,
+                                width: "100%",
+                                margin: "0 auto",
+                                marginTop: 80,
+                                display: "flex",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <Profile refreshUser={refreshUser} userObj={userObj} />
+                        </div>
+                    }
+                />
+                <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
-
         </Router>
     );
 };
