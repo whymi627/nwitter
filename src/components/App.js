@@ -1,37 +1,60 @@
 import { useEffect, useState } from "react";
 import AppRouter from "components/Router";
 import { authService } from "fbase";
+import { onAuthStateChanged } from "firebase/auth";
 
 function App() {
   const [init, setInit] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userObj, setUserObj] = useState(null);
 
+  // useEffect(() => {
+  //   authService.onAuthStateChanged((user) => {
+  //     if (user){
+  //       setUserObj({
+  //         uid: user.uid,
+  //         displayName: user.displayName,
+  //         updateProfile: (args) => user.updateProfile(args),
+  //     });
+  //     }
+  //     else{
+  //       setIsLoggedIn(false);
+  //     }
+  //     setInit(true);
+  //   });
+  // }, []);
+  
   useEffect(() => {
-    authService.onAuthStateChanged((user) => {
-      if (user){
-        setIsLoggedIn(user);
+    const unsubscribe = onAuthStateChanged(authService, (user) => {
+      if (user) {
         setUserObj({
           uid: user.uid,
           displayName: user.displayName,
-          updateProfile: (args) => user.updateProfile(args),
-      });
-      }
-      else{
-        setIsLoggedIn(false);
-      }
+          updateProfile: (args) =>  user.updateProfile(args),
+          });  
+      } else {
+        setUserObj(null);
+      }  
       setInit(true);
     });
+
+    return () => unsubscribe(); // cleanup함수에서 unsubscribe
   }, []);
 
-  const refreshUser = () => {
-    setUserObj(authService.currentUser);
-  }
+    const refreshUser = () => {
+      const user = authService.currentUser;
+      setUserObj({
+        uid: user.uid,
+        displayName: user.displayName,
+        updateProfile: (args) => user.updateProfile(args),
+      });
+    };
+
   return(
     <>
     {init ? (<AppRouter 
               refreshUser={refreshUser}
-              isLoggedIn={isLoggedIn} 
+              isLoggedIn={Boolean(userObj)} 
               userObj={userObj}
              /> 
           ) : (

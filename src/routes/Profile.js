@@ -9,8 +9,8 @@ import Nweet from "components/Nweet";
 const Profile = ({ userObj, refreshUser }) => {
 
     const navigate = useNavigate();
-    const [newDisplayName, setNewDisplayName] = useState(userObj.newDisplayName);
-    refreshUser();
+    const [newDisplayName, setNewDisplayName] = useState(userObj.displayName);
+   
 
     const onLogOutClick = () => {
         authService.signOut();
@@ -28,10 +28,16 @@ const Profile = ({ userObj, refreshUser }) => {
         event.preventDefault();
         if (userObj.displayName !== newDisplayName){
             try {
-                await updateProfile(userObj, {
-                    displayName: newDisplayName
-                });
-                console.log("프로필이 성공적으로 업데이트되었습니다.");
+                const user = authService.currentUser;
+                if(user){
+                    await updateProfile(user, {
+                        displayName: newDisplayName
+                    });
+                    refreshUser();
+                    console.log("프로필이 성공적으로 업데이트되었습니다.");
+                } else {
+                    console.log("사용자가 인증되지 않았습니다.")
+                }
             } catch (error) {
                 console.error("프로필 업데이트 오류:", error);
             }
